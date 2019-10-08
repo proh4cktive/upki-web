@@ -23,7 +23,7 @@ In order to install Node.js 10 LTS on Debian 9
 ```bash
 curl -sL https://deb.nodesource.com/setup_10.x | sudo bash
 sudo apt update
-sudo apt -y install gcc g++ make nodejs
+sudo apt -y install gcc g++ make nodejs git
 ```
 
 Then install VueJS

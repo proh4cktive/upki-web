@@ -268,43 +268,18 @@ export default {
       }
     },
     onCertTypeRemove(selectedOption) {
-      if (selectedOption === 'user') {
-        if (this.profileForm.extendedKeyUsage.includes('clientAuth')) {
-          this.profileForm.extendedKeyUsage = this.profileForm.extendedKeyUsage.filter(item => item !== 'clientAuth');
-        }
-        if (this.profileForm.keyUsage.includes('keyEncipherment')) {
-          this.profileForm.keyUsage = this.profileForm.keyUsage.filter(item => item !== 'keyEncipherment');
-        }
-        if (this.profileForm.keyUsage.includes('dataEncipherment')) {
-          this.profileForm.keyUsage = this.profileForm.keyUsage.filter(item => item !== 'dataEncipherment');
-        }
-        if (this.profileForm.keyUsage.includes('nonRepudiation')) {
-          this.profileForm.keyUsage = this.profileForm.keyUsage.filter(item => item !== 'nonRepudiation');
-        }
-      } else if (selectedOption === 'email') {
-        if (this.profileForm.extendedKeyUsage.includes('emailProtection')) {
-          this.profileForm.extendedKeyUsage = this.profileForm.extendedKeyUsage.filter(item => item !== 'emailProtection');
-        }
-        if (this.profileForm.keyUsage.includes('keyEncipherment')) {
-          this.profileForm.keyUsage = this.profileForm.keyUsage.filter(item => item !== 'keyEncipherment');
-        }
-        if (this.profileForm.keyUsage.includes('digitalSignature')) {
-          this.profileForm.keyUsage = this.profileForm.keyUsage.filter(item => item !== 'digitalSignature');
-        }
-      } else if (selectedOption === 'server') {
-        if (this.profileForm.extendedKeyUsage.includes('serverAuth')) {
-          this.profileForm.extendedKeyUsage = this.profileForm.extendedKeyUsage.filter(item => item !== 'serverAuth');
-        }
-        if (this.profileForm.keyUsage.includes('keyEncipherment')) {
-          this.profileForm.keyUsage = this.profileForm.keyUsage.filter(item => item !== 'keyEncipherment');
-        }
-        if (this.profileForm.keyUsage.includes('digitalSignature')) {
-          this.profileForm.keyUsage = this.profileForm.keyUsage.filter(item => item !== 'digitalSignature');
-        }
-        if (this.profileForm.keyUsage.includes('nonRepudiation')) {
-          this.profileForm.keyUsage = this.profileForm.keyUsage.filter(item => item !== 'nonRepudiation');
-        }
+      // Remove profile usages
+      if (this.profileForm.certType.includes(selectedOption)) {
+        this.profileForm.certType = this.profileForm.certType.filter(item => item !== selectedOption);
       }
+      this.profileForm.extendedKeyUsage = [];
+      this.profileForm.keyUsage = [];
+      // Then rebuild the complete profile
+      this.profileForm.certType.forEach((usage) => {
+        // eslint-disable-next-line
+        console.log(usage);
+        this.onCertTypeSelect(usage);
+      });
     },
     addProfile(payload) {
       const path = `${this.api_host}/profiles`;
