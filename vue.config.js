@@ -1,5 +1,5 @@
 module.exports = {
     devServer: {
-        public: 'certificates.kitchen.io'
+        public: 'certificates.prohacktive.io'
     }
 }

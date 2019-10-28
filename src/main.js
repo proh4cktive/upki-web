@@ -6,6 +6,7 @@ import BootstrapVue from 'bootstrap-vue';
 import VueSidebarMenu from 'vue-sidebar-menu';
 import Multiselect from 'vue-multiselect';
 import axios from 'axios';
+import https from 'https';
 import Vue from 'vue';
 import App from './App';
 import router from './router';
@@ -16,6 +17,10 @@ Vue.config.productionTip = false;
 Vue.use(BootstrapVue);
 Vue.use(VueSidebarMenu);
 Vue.component('multiselect', Multiselect);
+
+const upki = axios.create({
+    httpsAgent: new https.Agent({ rejectUnauthorized: false })
+});
 
 /* eslint-disable no-new */
 new Vue({
@@ -99,7 +104,7 @@ new Vue({
     },
     downloadNode(dn, cn, profile) {
       const dest = btoa(dn);
-      axios.get(`${publicHost}/certs/${dest}`)
+      upki.get(`${publicHost}/certs/${dest}`)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
@@ -118,7 +123,7 @@ new Vue({
     },
     getProfiles() {
       const path = `${privateHost}/profiles`;
-      axios.get(path)
+      upki.get(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant !== 'success') {
@@ -134,7 +139,7 @@ new Vue({
     },
     getNodes() {
       const path = `${privateHost}/nodes`;
-      axios.get(path)
+      upki.get(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant !== 'success') {
@@ -150,7 +155,7 @@ new Vue({
     },
     getOptions() {
       const path = `${privateHost}/options`;
-      axios.get(path)
+      upki.get(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant !== 'success') {
