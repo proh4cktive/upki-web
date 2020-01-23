@@ -26,11 +26,6 @@ sudo apt update
 sudo apt -y install gcc g++ make nodejs git
 ```
 
-Then install VueJS
-```bash
-npm install -g @vue/cli
-```
-
 For detailed instructions see [NPM Install](https://tecadmin.net/install-latest-nodejs-npm-on-debian/) and [VueJs Install](https://cli.vuejs.org/guide/installation.html)
 
 ## 2. Install
