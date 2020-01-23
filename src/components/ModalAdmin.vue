@@ -49,6 +49,7 @@ export default {
       adminForm: this.$root.adminForm,
       actionName: null,
       title: null,
+      nodeAdmins: {}
     };
   },
   name: 'ModalAdmin',
@@ -64,7 +65,7 @@ export default {
         this.actionName = action;
       }
       // Display modal
-      this.$refs.modalNode.show();
+      this.$refs.modalAdmin.show();
     },
     addAdmin(payload) {
       const path = `${this.api_host}/admins`;
@@ -85,18 +86,18 @@ export default {
     },
     onSubmit(evt) {
       evt.preventDefault();
-      this.$refs.modalNode.hide();
+      this.$refs.modalAdmin.hide();
       const payload = {
         DN: this.adminForm.DN,
       };
       this.addAdmin(payload);
-      this.$refs.modalNode.hide();
+      this.$refs.modalAdmin.hide();
       // Reset data
       this.adminForm = this.$root.adminForm;
     },
     onReset(evt) {
       evt.preventDefault();
-      this.$refs.modalNode.hide();
+      this.$refs.modalAdmin.hide();
       // Reset data
       this.adminForm = this.$root.adminForm;
     },

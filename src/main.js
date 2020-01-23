@@ -91,6 +91,9 @@ new Vue({
         KeyType: '',
         Sans: [],
       },
+      adminForm: {
+        
+      }
     };
   },
   methods: {
