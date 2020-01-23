@@ -45,13 +45,13 @@ export default {
           if (variant === 'success') {
             this.$root.forceFileDownload({ name: 'ca.crt', data: res.data.certificate });
           } else {
-            this.$root.show(res.data.message, 'danger');
+            this.$root.showAlert(res.data.message, 'danger');
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
     downloadCRL() {
@@ -61,13 +61,13 @@ export default {
           if (variant === 'success') {
             this.$root.forceFileDownload({ name: 'crl.pem', data: res.data.certificate });
           } else {
-            this.$root.show(res.data.message, 'danger');
+            this.$root.showAlert(res.data.message, 'danger');
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
   },

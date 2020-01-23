@@ -106,13 +106,13 @@ export default {
           if (variant === 'success') {
             this.$root.getProfiles();
           } else {
-            this.$root.show(res.data.message, variant);
+            this.$root.showAlert(res.data.message, variant);
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
   },

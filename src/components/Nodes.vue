@@ -149,15 +149,15 @@ export default {
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
-            this.$root.show(res.data.command, 'success', 60);
+            this.$root.showAlert(res.data.command, 'success', 60);
           } else {
-            this.$root.show(res.data.message, variant);
+            this.$root.showAlert(res.data.message, variant);
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
     revokeNode(dn) {
@@ -170,13 +170,13 @@ export default {
           } else {
             // eslint-disable-next-line
             console.log(res.data.message);
-            this.$root.show(res.data.message, 'danger');
+            this.$root.showAlert(res.data.message, 'danger');
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
     restoreNode(dn) {
@@ -187,13 +187,13 @@ export default {
           if (variant === 'success') {
             this.$root.getNodes();
           } else {
-            this.$root.show(res.data.message, 'danger');
+            this.$root.showAlert(res.data.message, 'danger');
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
     deleteNode(dn) {
@@ -207,13 +207,13 @@ export default {
           } else {
             // eslint-disable-next-line
             console.error(res.data.message);
-            this.$root.show(res.data.message, 'danger');
+            this.$root.showAlert(res.data.message, 'danger');
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
   },

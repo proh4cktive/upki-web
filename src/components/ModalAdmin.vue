@@ -76,12 +76,12 @@ export default {
             // Update global list
             this.$root.getNodes();
           }
-          this.$root.show(res.data.message, variant);
+          this.$root.showAlert(res.data.message, variant);
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
     onSubmit(evt) {

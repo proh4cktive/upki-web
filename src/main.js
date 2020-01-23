@@ -115,13 +115,13 @@ new Vue({
           } else {
             // eslint-disable-next-line
             console.error(res.data.message);
-            this.show(res.data.message, 'danger');
+            this.showAlert(res.data.message, 'danger');
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.show(error, 'danger', 60);
+          this.showAlert(error, 'danger', 10);
         });
     },
     getProfiles() {
@@ -130,14 +130,14 @@ new Vue({
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant !== 'success') {
-            this.show(res.data.message, variant);
+            this.showAlert(res.data.message, variant);
           }
           this.profiles = res.data.profiles;
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.show(error, 'danger', 60);
+          this.showAlert(error, 'danger', 10);
         });
     },
     getNodes() {
@@ -146,14 +146,14 @@ new Vue({
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant !== 'success') {
-            this.show(res.data.message, variant);
+            this.showAlert(res.data.message, variant);
           }
           this.nodes = res.data.nodes;
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.show(error, 'danger', 60);
+          this.showAlert(error, 'danger', 10);
         });
     },
     getOptions() {
@@ -162,7 +162,7 @@ new Vue({
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant !== 'success') {
-            this.show(res.data.message, variant);
+            this.showAlert(res.data.message, variant);
             return {
               CertTypes: [],
               Digest: [],
@@ -178,7 +178,7 @@ new Vue({
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.show(error, 'danger', 60);
+          this.showAlert(error, 'danger', 10);
         });
     },
     initProfile(data) {
@@ -287,13 +287,13 @@ new Vue({
       });
       return subject;
     },
-    show(msg, variant, dismiss = 10) {
+    showAlert(msg, variant, dismiss = 10) {
       this.$root.message = msg;
       this.$root.message_class = variant;
       this.$root.message_dismiss = dismiss;
       this.$root.showMessage = true;
     },
-    hide() {
+    hideAlert() {
       this.$root.message = '';
       this.$root.showMessage = false;
     },

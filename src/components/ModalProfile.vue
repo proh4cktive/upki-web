@@ -288,12 +288,12 @@ export default {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           // Update global list
           this.$root.getProfiles();
-          this.$root.show(res.data.message, variant);
+          this.$root.showAlert(res.data.message, variant);
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
     updateProfile(payload) {
@@ -303,23 +303,23 @@ export default {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           // Update global list
           this.$root.getProfiles();
-          this.$root.show(res.data.message, variant);
+          this.$root.showAlert(res.data.message, variant);
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger', 60);
         });
     },
     onSubmit(evt) {
       evt.preventDefault();
       if (this.profileForm.DN.includes('CN=')) {
-        this.$root.show('You cannot define CN in profile subject', 'danger');
+        this.$root.showAlert('You cannot define CN in profile subject', 'danger');
         return false;
       }
       const fields = this.$root.buildSubject(this.profileForm.DN);
       if (!fields) {
-        this.$root.show('Invalid subject string, should be /C=XX/ST=XX/L=XX/O=XX at least');
+        this.$root.showAlert('Invalid subject string, should be /C=XX/ST=XX/L=XX/O=XX at least');
         return false;
       }
       const payload = {
