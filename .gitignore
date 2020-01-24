@@ -21,3 +21,6 @@ yarn-error.log*
 
 # Build
 dist
+
+# Socket json file
+src/data/socket.json
