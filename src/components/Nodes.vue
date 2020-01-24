@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import request from './../core/request';
 import ModalNode from './ModalNode';
 import ModalSign from './ModalSign';
 
@@ -145,11 +145,11 @@ export default {
       this.$root.downloadNode(dn, cn, profile);
     },
     getCommand(node) {
-      axios.post(`${this.node_host}/magic/${node.Profile}`, { cn: node.CN })
+      request.post(`${this.node_host}/magic/${node.Profile}`, { cn: node.CN })
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
-            this.$root.showAlert(res.data.command, 'success', 60);
+            this.$root.showAlert(res.data.command, 'success');
           } else {
             this.$root.showAlert(res.data.message, variant);
           }
@@ -157,12 +157,12 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.showAlert(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     revokeNode(dn) {
       const path = `${this.api_host}/revoke`;
-      axios.post(path, { DN: dn, Reason: 'admin revokation' })
+      request.post(path, { DN: dn, Reason: 'admin revokation' })
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
@@ -176,12 +176,12 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.showAlert(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     restoreNode(dn) {
       const path = `${this.api_host}/unrevoke`;
-      axios.post(path, { DN: dn })
+      request.post(path, { DN: dn })
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
@@ -193,13 +193,13 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.showAlert(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     deleteNode(dn) {
       const dest = btoa(dn);
       const path = `${this.api_host}/nodes/${dest}`;
-      axios.delete(path)
+      request.delete(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
@@ -213,7 +213,7 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.showAlert(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
   },

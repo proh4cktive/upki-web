@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import request from './../core/request';
 import ModalProfile from './ModalProfile';
 
 export default {
@@ -84,6 +84,9 @@ export default {
   },
   components: {
     modalProfile: ModalProfile,
+  },
+  mounted() {
+    this.$root.getProfiles();
   },
   methods: {
     showProfileModal(profile, action = 'Create') {
@@ -100,7 +103,7 @@ export default {
     },
     deleteProfile(profile) {
       const path = `${this.api_host}/profiles/${profile.name}`;
-      axios.delete(path)
+      request.delete(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
@@ -112,7 +115,7 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.showAlert(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
   },

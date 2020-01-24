@@ -189,7 +189,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import request from './../core/request';
 import Multiselect from 'vue-multiselect';
 
 export default {
@@ -283,7 +283,7 @@ export default {
     },
     addProfile(payload) {
       const path = `${this.api_host}/profiles`;
-      axios.post(path, payload)
+      request.post(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           // Update global list
@@ -293,12 +293,12 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.showAlert(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     updateProfile(payload) {
       const path = `${this.api_host}/profiles/${payload.name}`;
-      axios.put(path, payload)
+      request.put(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           // Update global list
@@ -308,7 +308,7 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.showAlert(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     onSubmit(evt) {
@@ -362,6 +362,7 @@ export default {
 .controls
   text-align: right
   margin-top: 20px
+
   button
     margin-left: 1em
 </style>

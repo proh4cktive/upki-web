@@ -1,1 +1,5 @@
-{"host":"certificates.kitchen.io"}
+{
+  "protocol": "http",
+  "host": "certificates.kitchen.io",
+  "port": 8000
+}

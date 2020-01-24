@@ -42,7 +42,7 @@
   </b-modal>
 </template>
 <script>
-import axios from 'axios';
+import request from './../core/request';
 
 export default {
   data() {
@@ -84,7 +84,7 @@ export default {
         DN: `${this.nodeForm.DN}`,
         CSR: this.csr_data,
       };
-      axios.post(path, payload)
+      request.post(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
@@ -98,7 +98,7 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.showAlert(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
       this.$refs.modalSign.hide();
       // Reset data

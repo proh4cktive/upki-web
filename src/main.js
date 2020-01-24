@@ -5,8 +5,7 @@ import 'vue-sidebar-menu/dist/vue-sidebar-menu.css';
 import BootstrapVue from 'bootstrap-vue';
 import VueSidebarMenu from 'vue-sidebar-menu';
 import Multiselect from 'vue-multiselect';
-import axios from 'axios';
-import https from 'https';
+import request from './core/request';
 import Vue from 'vue';
 import App from './App';
 import router from './router';
@@ -17,10 +16,6 @@ Vue.config.productionTip = false;
 Vue.use(BootstrapVue);
 Vue.use(VueSidebarMenu);
 Vue.component('multiselect', Multiselect);
-
-const upki = axios.create({
-    httpsAgent: new https.Agent({ rejectUnauthorized: false })
-});
 
 /* eslint-disable no-new */
 new Vue({
@@ -46,7 +41,6 @@ new Vue({
       publicAPI: publicHost,
       message: '',
       message_class: '',
-      message_dismiss: 10,
       showMessage: false,
       profileForm: {
         options: {
@@ -91,9 +85,7 @@ new Vue({
         KeyType: '',
         Sans: [],
       },
-      adminForm: {
-        
-      }
+      adminForm: {}
     };
   },
   methods: {
@@ -107,7 +99,7 @@ new Vue({
     },
     downloadNode(dn, cn, profile) {
       const dest = btoa(dn);
-      upki.get(`${publicHost}/certs/${dest}`)
+      request.get(`${publicHost}/certs/${dest}`)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
@@ -121,12 +113,12 @@ new Vue({
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.showAlert(error, 'danger', 10);
+          this.showAlert(error, 'danger');
         });
     },
     getProfiles() {
       const path = `${privateHost}/profiles`;
-      upki.get(path)
+      request.get(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant !== 'success') {
@@ -137,12 +129,12 @@ new Vue({
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.showAlert(error, 'danger', 10);
+          this.showAlert(error, 'danger');
         });
     },
     getNodes() {
       const path = `${privateHost}/nodes`;
-      upki.get(path)
+      request.get(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant !== 'success') {
@@ -153,12 +145,12 @@ new Vue({
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.showAlert(error, 'danger', 10);
+          this.showAlert(error, 'danger');
         });
     },
     getOptions() {
       const path = `${privateHost}/options`;
-      upki.get(path)
+      request.get(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant !== 'success') {
@@ -178,7 +170,23 @@ new Vue({
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.showAlert(error, 'danger', 10);
+          this.showAlert(error, 'danger');
+        });
+    },
+    getAdmins() {
+      const path = `${privateHost}/admins`;
+      request.get(path)
+        .then((res) => {
+          const variant = (res.data.status === 'success') ? 'success' : 'danger';
+          if (variant !== 'success') {
+            this.showAlert(res.data.message, variant);
+          }
+          this.admins = res.data.admins;
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.error(error);
+          this.showAlert(error, 'danger');
         });
     },
     initProfile(data) {
@@ -287,18 +295,22 @@ new Vue({
       });
       return subject;
     },
-    showAlert(msg, variant, dismiss = 10) {
+    showAlert(msg, variant, dismiss = 5) {
+      // reset alert if it is already active
+      if (this.$root.showMessage == true) {
+        this.resetAlert()
+      }
+
       this.$root.message = msg;
       this.$root.message_class = variant;
-      this.$root.message_dismiss = dismiss;
-      this.$root.showMessage = true;
+      this.$root.showMessage = dismiss;
     },
     hideAlert() {
+      this.resetAlert()
+    },
+    resetAlert() {
       this.$root.message = '';
       this.$root.showMessage = false;
-    },
-  },
-  created() {
-    this.getProfiles();
-  },
+    }
+  }
 });

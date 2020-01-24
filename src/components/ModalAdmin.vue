@@ -40,7 +40,7 @@
     </b-modal>
 </template>
 <script>
-import axios from 'axios';
+import request from './../core/request';
 
 export default {
   data() {
@@ -69,7 +69,7 @@ export default {
     },
     addAdmin(payload) {
       const path = `${this.api_host}/admins`;
-      axios.post(path, payload)
+      request.post(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
@@ -81,7 +81,7 @@ export default {
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.showAlert(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     onSubmit(evt) {

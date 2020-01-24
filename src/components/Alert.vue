@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container class="alert-container mt-3">
     <b-row>
       <b-col align-self="center">
         <b-alert
@@ -21,7 +21,7 @@
 export default {
   data() {
     return {
-      dismissSecs: 10,
+      dismissSecs: typeof this.showAlert === "number" ? this.showAlert : 10,
       dismissCountDown: 0,
       showDismissibleAlert: false
     };
@@ -41,26 +41,9 @@ export default {
   },
   watch: {
     showAlert: {
-      handler(value) {
-        if (value === true) {
-          // default countdown value
-          this.dismissCountDown = this.dismissSecs;
-          return
-        }
-        if (value === false) {
-          // stop countdown
-          this.dismissCountDown = 0;
-          return
-        }
-
-        // integer case
-        this.dismissCountDown = parseInt(value);
-      },
+      handler(value) { this.alertMessageHasChanged(value) },
       immediate: true
     }
-  },
-  mounted() {
-    console.log("mounted", this.showAlert);
   },
   methods: {
     countDownChanged(dismissCountDown) {
@@ -69,7 +52,31 @@ export default {
     alertHidden() {
       this.dismissCountDown = 0;
       this.$emit("close");
+    },
+    alertMessageHasChanged(value) {
+      if (value === true) {
+        // default countdown value
+        this.dismissCountDown = this.dismissSecs;
+        return;
+      }
+      if (value === false) {
+        // stop countdown
+        this.dismissCountDown = 0;
+        return;
+      }
+
+      // integer case
+      this.dismissCountDown = parseInt(value);
     }
   }
 };
 </script>
+
+<style lang="sass">
+.alert-container
+  position: fixed
+  bottom: 20px
+  right: 20px
+  max-width: 350px
+
+</style>
