@@ -42,7 +42,7 @@
   </b-modal>
 </template>
 <script>
-import axios from 'axios';
+import request from './../core/request';
 
 export default {
   data() {
@@ -69,10 +69,10 @@ export default {
         this.csr_data = e.target.result;
       });
       reader.onerror = (() => {
-        this.$root.show('Unable to read File', 'danger');
+        this.$root.showAlert('Unable to read File', 'danger');
       });
       if (!this.csr_data.includes('-----BEGIN CERTIFICATE REQUEST-----')) {
-        this.$root.show('This does not seems to be a valid CSR file', 'danger');
+        this.$root.showAlert('This does not seems to be a valid CSR file', 'danger');
       }
     },
     onSubmit(evt) {
@@ -84,7 +84,7 @@ export default {
         DN: `${this.nodeForm.DN}`,
         CSR: this.csr_data,
       };
-      axios.post(path, payload)
+      request.post(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
@@ -92,13 +92,13 @@ export default {
           } else {
             // eslint-disable-next-line
             console.error(res.data.message);
-            this.$root.show(res.data.message, 'danger');
+            this.$root.showAlert(res.data.message, 'danger');
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
       this.$refs.modalSign.hide();
       // Reset data

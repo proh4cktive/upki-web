@@ -1,76 +1,75 @@
 <template>
-  <div class="container">
-    <h1 class="title text-center">Welcome on μPKI administration!</h1>
-    <div class="logo"></div>
-    <div class="row">
-      <div class="col-sm-4 offset-sm-2 text-center">
-        <b-button type="button"
-          block
-          variant="success"
-          size="lg"
-          @click="downloadCA()">
+  <b-container class="text-center d-flex flex-column align-items-center justify-content-center" style="height: 100%">
+    <div>
+      <h1 class="title text-center">Welcome on μPKI administration!</h1>
+      <div class="logo mt-5 mb-5"></div>
+      <div>
+        <b-button type="button" variant="success" size="lg" @click="downloadCA()">
           <i class="fa fa-download"></i>
-          Download CA certificate
+          Download CA certificate (crt file)
         </b-button>
-      </div>
-      <div class="col-sm-4 text-center">
-        <b-button type="button"
-          block
-          variant="primary"
-          size="lg"
-          @click="downloadCRL()">
+
+        <b-button type="button" variant="primary" size="lg" class="ml-3" @click="downloadCRL()">
           <i class="fa fa-download"></i>
-          Download CRL
+          Download CRL (pem file)
         </b-button>
       </div>
     </div>
-  </div>
+  </b-container>
 </template>
 
 <script>
-import axios from 'axios';
+import request from './../core/request';
 
 export default {
-  name: 'Home',
+  name: "Home",
   data() {
     return {
-      api_host: this.$root.publicAPI,
+      api_host: this.$root.publicAPI
     };
   },
   methods: {
     downloadCA() {
-      axios.get(`${this.api_host}/certs/ca.crt`)
-        .then((res) => {
-          const variant = (res.data.status === 'success') ? 'success' : 'danger';
-          if (variant === 'success') {
-            this.$root.forceFileDownload({ name: 'ca.crt', data: res.data.certificate });
+      request
+        .get(`${this.api_host}/certs/ca.crt`)
+        .then(res => {
+          const variant = res.data.status === "success" ? "success" : "danger";
+          if (variant === "success") {
+            this.$root.forceFileDownload({
+              name: "ca.crt",
+              data: res.data.certificate
+            });
           } else {
-            this.$root.show(res.data.message, 'danger');
+            this.$root.showAlert(res.data.message, "danger");
           }
         })
-        .catch((error) => {
+        .catch(error => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, "danger");
         });
     },
     downloadCRL() {
-      axios.get(`${this.api_host}/certs/crl.pem`)
-        .then((res) => {
-          const variant = (res.data.status === 'success') ? 'success' : 'danger';
-          if (variant === 'success') {
-            this.$root.forceFileDownload({ name: 'crl.pem', data: res.data.certificate });
+      request
+        .get(`${this.api_host}/certs/crl.pem`)
+        .then(res => {
+          const variant = res.data.status === "success" ? "success" : "danger";
+          if (variant === "success") {
+            this.$root.forceFileDownload({
+              name: "crl.pem",
+              data: res.data.certificate
+            });
           } else {
-            this.$root.show(res.data.message, 'danger');
+            this.$root.showAlert(res.data.message, "danger");
           }
         })
-        .catch((error) => {
+        .catch(error => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, "danger");
         });
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -79,13 +78,10 @@ h1.title
   color: #3d4c5a
 
 .logo
-  background-image: url('~@/assets/logo.png')
-  background-repeat: no-repeat
-  background-size: 50%
-  height: 60vh
-  width: auto
-  margin: auto
-  margin-top: 5%
-  margin-left: 35%
+  background: url('~@/assets/logo.png') no-repeat center center
+  background-size: contain
+  margin: 0 auto
+  width: 200px
+  height: 200px
 
 </style>

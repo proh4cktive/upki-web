@@ -40,7 +40,7 @@
     </b-modal>
 </template>
 <script>
-import axios from 'axios';
+import request from './../core/request';
 
 export default {
   data() {
@@ -49,6 +49,7 @@ export default {
       adminForm: this.$root.adminForm,
       actionName: null,
       title: null,
+      nodeAdmins: {}
     };
   },
   name: 'ModalAdmin',
@@ -64,39 +65,39 @@ export default {
         this.actionName = action;
       }
       // Display modal
-      this.$refs.modalNode.show();
+      this.$refs.modalAdmin.show();
     },
     addAdmin(payload) {
       const path = `${this.api_host}/admins`;
-      axios.post(path, payload)
+      request.post(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
             // Update global list
             this.$root.getNodes();
           }
-          this.$root.show(res.data.message, variant);
+          this.$root.showAlert(res.data.message, variant);
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     onSubmit(evt) {
       evt.preventDefault();
-      this.$refs.modalNode.hide();
+      this.$refs.modalAdmin.hide();
       const payload = {
         DN: this.adminForm.DN,
       };
       this.addAdmin(payload);
-      this.$refs.modalNode.hide();
+      this.$refs.modalAdmin.hide();
       // Reset data
       this.adminForm = this.$root.adminForm;
     },
     onReset(evt) {
       evt.preventDefault();
-      this.$refs.modalNode.hide();
+      this.$refs.modalAdmin.hide();
       // Reset data
       this.adminForm = this.$root.adminForm;
     },

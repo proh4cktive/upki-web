@@ -189,7 +189,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import request from './../core/request';
 import Multiselect from 'vue-multiselect';
 
 export default {
@@ -283,43 +283,43 @@ export default {
     },
     addProfile(payload) {
       const path = `${this.api_host}/profiles`;
-      axios.post(path, payload)
+      request.post(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           // Update global list
           this.$root.getProfiles();
-          this.$root.show(res.data.message, variant);
+          this.$root.showAlert(res.data.message, variant);
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     updateProfile(payload) {
       const path = `${this.api_host}/profiles/${payload.name}`;
-      axios.put(path, payload)
+      request.put(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           // Update global list
           this.$root.getProfiles();
-          this.$root.show(res.data.message, variant);
+          this.$root.showAlert(res.data.message, variant);
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     onSubmit(evt) {
       evt.preventDefault();
       if (this.profileForm.DN.includes('CN=')) {
-        this.$root.show('You cannot define CN in profile subject', 'danger');
+        this.$root.showAlert('You cannot define CN in profile subject', 'danger');
         return false;
       }
       const fields = this.$root.buildSubject(this.profileForm.DN);
       if (!fields) {
-        this.$root.show('Invalid subject string, should be /C=XX/ST=XX/L=XX/O=XX at least');
+        this.$root.showAlert('Invalid subject string, should be /C=XX/ST=XX/L=XX/O=XX at least');
         return false;
       }
       const payload = {
@@ -362,6 +362,7 @@ export default {
 .controls
   text-align: right
   margin-top: 20px
+
   button
     margin-left: 1em
 </style>

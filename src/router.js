@@ -7,7 +7,7 @@ import Admins from '@/components/Admins';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -32,3 +32,14 @@ export default new Router({
   ],
   mode: 'history',
 });
+
+// eslint-disable-next-line
+router.beforeEach((to, from, next) => {
+  // reset alert message if it was enabled
+  if(router.app.resetAlert && router.app.showMessage) {
+    router.app.resetAlert()
+  }
+  next()
+})
+
+export default router

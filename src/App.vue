@@ -1,80 +1,102 @@
 <template>
-  <div id="app">
-    <link rel="stylesheet"
-        href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
-        integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
-        crossorigin="anonymous">
+  <div id="app" class="py-4">
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+      integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+      crossorigin="anonymous"
+    />
     <sidebar-menu
       :menu="menu"
       :width="width"
       :collapsed="collapsed"
+      @toggle-collapse="onToggleCollapse"
     />
-    <router-view/>
-    <alert v-if="this.$root.showMessage"
-                :message="this.$root.message"
-                :variant="this.$root.message_class"
-                :countDown="this.$root.message_dismiss"></alert>
+    <div
+      :style="{width: `calc(100% - ${hasSideMenuCollapsed ? '50px' : width})`, marginLeft: hasSideMenuCollapsed ? '50px' : width, height: '100%' }"
+    >
+      <router-view />
+    </div>
+
+    <alert
+      v-if="$root.showMessage == true || $root.showMessage > 0"
+      :message="$root.message"
+      :variant="$root.message_class"
+      :show-alert="$root.showMessage"
+      @close="$root.hideAlert()"
+    ></alert>
   </div>
 </template>
 
 <script>
-import Alert from './components/Alert';
+import Alert from "./components/Alert";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    alert: Alert,
+    alert: Alert
   },
   data() {
+    const defaultCollapsedBehavior = false;
     return {
-      width: '200px',
-      collapsed: true,
+      hasSideMenuCollapsed: defaultCollapsedBehavior,
+
+      width: "200px",
+      collapsed: defaultCollapsedBehavior,
       rtl: true,
       menu: [
         {
           header: true,
-          title: 'uPKI menu',
+          title: "menu"
         },
         {
-          href: '/',
-          title: 'Home',
-          icon: 'fa fa-home',
+          href: "/",
+          title: "Home",
+          icon: "fa fa-home"
         },
         {
-          href: '/nodes',
-          title: 'Certificates',
-          icon: 'fa fa-medal',
+          href: "/nodes",
+          title: "Certificates",
+          icon: "fa fa-medal"
         },
         {
-          href: '/profiles',
-          title: 'Profiles',
-          icon: 'fa fa-layer-group',
+          href: "/profiles",
+          title: "Profiles",
+          icon: "fa fa-layer-group"
         },
         {
-          href: '/admins',
-          title: 'Admins',
-          icon: 'fa fa-user-shield',
-        },
-      ],
+          href: "/admins",
+          title: "Admins",
+          icon: "fa fa-user-shield"
+        }
+      ]
     };
   },
+  methods: {
+    onToggleCollapse(value) {
+      this.hasSideMenuCollapsed = value
+    }
+  }
 };
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
-<!-- <style>
-#app {
-  margin-top: 40px
-}
-</style> -->
-
 <style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-top: 40px;
+  width: 100%;
+  height: 100%;
 }
 </style>

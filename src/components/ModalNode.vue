@@ -203,7 +203,7 @@
     </b-modal>
 </template>
 <script>
-import axios from 'axios';
+import request from './../core/request';
 
 export default {
   data() {
@@ -300,35 +300,35 @@ export default {
     },
     addNode(payload) {
       const path = `${this.api_host}/nodes`;
-      axios.post(path, payload)
+      request.post(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
             // Update global list
             this.$root.getNodes();
           }
-          this.$root.show(res.data.message, variant);
+          this.$root.showAlert(res.data.message, variant);
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     updateNode(payload) {
       const name = btoa(payload.DN);
       const path = `${this.api_host}/nodes/${name}`;
-      axios.put(path, payload)
+      request.put(path, payload)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           // Update global list
           this.$root.getNodes();
-          this.$root.show(res.data.message, variant);
+          this.$root.showAlert(res.data.message, variant);
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
     onSubmit(evt) {

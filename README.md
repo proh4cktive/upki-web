@@ -26,11 +26,6 @@ sudo apt update
 sudo apt -y install gcc g++ make nodejs git
 ```
 
-Then install VueJS
-```bash
-npm install -g @vue/cli
-```
-
 For detailed instructions see [NPM Install](https://tecadmin.net/install-latest-nodejs-npm-on-debian/) and [VueJs Install](https://cli.vuejs.org/guide/installation.html)
 
 ## 2. Install
@@ -41,27 +36,42 @@ For detailed instructions see [NPM Install](https://tecadmin.net/install-latest-
 npm install
 ```
 
-#### 2.2 Compiles and hot-reloads for development
+### 2.2 Create a socket json file into `src/data/socket.json`
+
+This file will make the liaison between the client and the `upki-ra` project. It not created, building or serving project will fail.
+
+Example:
+```json
+{
+  "protocol": "http",
+  "host": "certificates.kitchen.io",
+  "port": 8000
+}
+```
+
+Note: `host` can be an URL or an ipv4 address. 
+
+#### 2.3 Compiles and hot-reloads for development
 ```
 npm run serve
 ```
 
-#### 2.3 Compiles and minifies for production
+#### 2.4 Compiles and minifies for production
 ```
 npm run build
 ```
 
-#### 2.4 Run your tests
+#### 2.5 Run your tests
 ```
 npm run test
 ```
 
-#### 2.5 Lints and fixes files
+#### 2.6 Lints and fixes files
 ```
 npm run lint
 ```
 
-#### 2.6 Customize configuration
+#### 2.7 Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 In order to run your development server you will probably need to adjust the public url in vue.config.js
 

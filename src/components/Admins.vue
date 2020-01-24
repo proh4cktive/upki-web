@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import request from './../core/request';
 import ModalAdmin from './ModalAdmin';
 
 export default {
@@ -55,25 +55,28 @@ export default {
   components: {
     modalAdmin: ModalAdmin,
   },
+  mounted() {
+    this.$root.getAdmins()
+  },
   methods: {
     showAdminModal(admin, action = 'Create') {
       this.$refs.modalAdmin.showModal(admin, action);
     },
     deleteProfile(admin) {
       const path = `${this.api_host}/admins/${admin.name}`;
-      axios.delete(path)
+      request.delete(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
             this.$root.getAdmins();
           } else {
-            this.$root.show(res.data.message, variant);
+            this.$root.showAlert(res.data.message, variant);
           }
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
-          this.$root.show(error, 'danger', 60);
+          this.$root.showAlert(error, 'danger');
         });
     },
   },
