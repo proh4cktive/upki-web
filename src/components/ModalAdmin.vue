@@ -3,57 +3,84 @@
       title="Promote Node to Admin role"
       size="lg"
       hide-footer>
-    <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-      <b-card bg-variant="light">
-        <b-table
-          small
-          striped
-          hover
-          head-variant="dark"
-          show-empty
-          selectable
-          select-mode="multi"
-          :per-page="perPage"
-          :current-page="currentPage"
-          :items="suggestedNodes"
-          :fields="fields"
-          :tbody-tr-class="rowClass"
-          @row-selected="selectNode">
-          <template v-slot:cell(selected)="{ rowSelected }">
-            <template v-if="rowSelected">
-              <i class="fa fa-check"></i>
+    <b-container>
+      <b-row>
+        <b-col sm="12">
+          <b-form-group
+            label="Filter"
+            label-cols-sm="1"
+            label-align-sm="right"
+            label-size="sm"
+            label-for="filterInput"
+            class="mb-0"
+          >
+            <b-input-group size="sm">
+              <b-form-input
+                v-model="filter"
+                type="search"
+                id="filterInput"
+                placeholder="Filter nodes"
+              ></b-form-input>
+              <b-input-group-append>
+                <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col sm="12">
+          <b-table
+            small
+            striped
+            hover
+            head-variant="dark"
+            show-empty
+            selectable
+            select-mode="multi"
+            :per-page="perPage"
+            :current-page="currentPage"
+            :filter="filter"
+            :items="suggestedNodes"
+            :fields="fields"
+            :tbody-tr-class="rowClass"
+            @row-selected="selectNode" class="neo">
+            <template v-slot:cell(selected)="{ rowSelected }">
+              <template v-if="rowSelected">
+                <i class="fa fa-check"></i>
+              </template>
+              <template v-else>
+                <span aria-hidden="true">&nbsp;</span>
+              </template>
             </template>
-            <template v-else>
-              <span aria-hidden="true">&nbsp;</span>
-            </template>
+          </b-table>
+          <template v-slot:empty="scope">
+            <div class="alert alert-warning">
+              <i class="fa fa-exclamation-triangle"></i>
+              {{ scope.emptyText }}
+            </div>
           </template>
-        </b-table>
-        <template v-slot:empty="scope">
-          <div class="alert alert-warning">
-            <i class="fa fa-exclamation-triangle"></i>
-            {{ scope.emptyText }}
-          </div>
-        </template>
-        <template v-slot:emptyfiltered="scope">
-          <div class="alert alert-warning">
-            <i class="fa fa-exclamation-triangle"></i>
-            {{ scope.emptyFilteredText }}
-          </div>
-        </template>
-        <b-container fluid>
-          <b-row>
-            <b-col sm="12">
-              <b-pagination
-                v-model="currentPage"
-                :total-rows="totalRows"
-                :per-page="perPage"
-                align="fill"
-                size="sm"
-              ></b-pagination>
-            </b-col>
-          </b-row>
-        </b-container>
-      </b-card>
+          <template v-slot:emptyfiltered="scope">
+            <div class="alert alert-warning">
+              <i class="fa fa-exclamation-triangle"></i>
+              {{ scope.emptyFilteredText }}
+            </div>
+          </template>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col sm="12">
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="fill"
+            size="sm"
+          ></b-pagination>
+        </b-col>
+      </b-row>
+    </b-container>
+    <b-form @submit="onSubmit" @reset="onReset">
       <b-form-group class="controls">
         <b-button type="submit"
           variant="primary">
@@ -165,10 +192,17 @@ export default {
   },
 };
 </script>
+
 <style lang="sass">
+
+.neo
+  margin-top: 1em
+
 .controls
   text-align: right
   margin-top: 20px
+
   button
     margin-left: 1em
+
 </style>
