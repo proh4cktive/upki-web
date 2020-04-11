@@ -1,12 +1,21 @@
 <template>
-  <b-container>
+  <b-container fluid>
     <b-row>
       <b-col sm="10">
         <h1><i class="fa fa-layer-group"></i> Profiles</h1>
       </b-col>
     </b-row>
     <b-row>
-      <b-col lg="6" class="my-1">
+      <b-col sm="12" md="6">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          :per-page="perPage"
+          align="fill"
+          size="sm"
+        ></b-pagination>
+      </b-col>
+      <b-col sm="12" md="4">
         <b-form-group
           label="Filter"
           label-cols-sm="1"
@@ -45,7 +54,8 @@
           hover
           head-variant="dark"
           show-empty
-          :per-page="15"
+          :per-page="perPage"
+          :current-page="currentPage"
           :filter="filter"
           :items="this.$root.profiles"
           :fields="fields"
@@ -123,6 +133,9 @@ export default {
     return {
       api_host: this.$root.privateAPI,
       profileForm: this.$root.profileForm,
+      perPage: 15,
+      totalRows: 1,
+      currentPage: 1,
       sortBy: 'Name',
       sortDesc: false,
       sortDirection: 'desc',
@@ -141,6 +154,7 @@ export default {
     modalProfile: ModalProfile,
   },
   mounted() {
+    this.$root.getProfiles();
     // Set the initial number of items
     this.totalRows = this.$root.profiles.length
   },
@@ -179,6 +193,9 @@ export default {
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
+  },
+  created() {
+    this.$root.getProfiles();
   },
 };
 </script>

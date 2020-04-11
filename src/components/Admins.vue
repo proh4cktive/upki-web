@@ -1,12 +1,21 @@
 <template>
-  <b-container>
+  <b-container fluid>
     <b-row>
       <b-col sm="10">
         <h1><i class="fa fa-user-shield"></i> Admins</h1>
       </b-col>
     </b-row>
     <b-row>
-      <b-col lg="6" class="my-1">
+      <b-col sm="12" md="6">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          :per-page="perPage"
+          align="fill"
+          size="sm"
+        ></b-pagination>
+      </b-col>
+      <b-col sm="12" md="4">
         <b-form-group
           label="Filter"
           label-cols-sm="1"
@@ -45,7 +54,8 @@
           hover
           head-variant="dark"
           show-empty
-          :per-page="15"
+          :per-page="perPage"
+          :current-page="currentPage"
           :items="this.$root.admins"
           :fields="fields"
           :sort-by.sync="sortBy"
@@ -88,6 +98,9 @@ export default {
   data() {
     return {
       api_host: this.$root.privateAPI,
+      perPage: 15,
+      totalRows: 1,
+      currentPage: 1,
       sortBy: 'Name',
       sortDesc: false,
       sortDirection: 'desc',
@@ -104,6 +117,7 @@ export default {
     modalAdmin: ModalAdmin,
   },
   mounted() {
+    this.$root.getAdmins();
     // Set the initial number of items
     this.totalRows = this.$root.admins.length;
   },

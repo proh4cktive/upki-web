@@ -1,12 +1,21 @@
 <template>
-  <b-container>
+  <b-container fluid>
     <b-row>
       <b-col sm="10">
         <h1><i class="fa fa-medal"></i> Certificates</h1>
       </b-col>
     </b-row>
     <b-row>
-      <b-col lg="6" class="my-1">
+      <b-col sm="12" md="6">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          :per-page="perPage"
+          align="fill"
+          size="sm"
+        ></b-pagination>
+      </b-col>
+      <b-col sm="12" md="4">
         <b-form-group
           label="Filter"
           label-cols-sm="1"
@@ -45,7 +54,8 @@
           hover
           head-variant="dark"
           show-empty
-          :per-page="15"
+          :per-page="perPage"
+          :current-page="currentPage"
           :filter="filter"
           :items="this.$root.nodes"
           :fields="fields"
@@ -161,6 +171,9 @@ export default {
     return {
       api_host: this.$root.privateAPI,
       node_host: this.$root.publicAPI,
+      perPage: 15,
+      totalRows: 1,
+      currentPage: 1,
       sortBy: 'Created',
       sortDesc: false,
       sortDirection: 'desc',
@@ -182,7 +195,7 @@ export default {
     modalSign: ModalSign,
   },
   mounted() {
-    this.$root.getProfiles();
+    this.$root.getNodes();
     // Set the initial number of items
     this.totalRows = this.$root.nodes.length
   },
@@ -192,7 +205,7 @@ export default {
     },
     rowClass(item, type) {
       if (!item || type !== 'row') return;
-      if (item.Admin) return 'table-danger';
+      if (item.Admin) return 'table-success';
     },
     showNodeModal(node, action) {
       this.$refs.modalNode.showModal(node, action);
@@ -293,7 +306,7 @@ export default {
     },
   },
   created() {
-    this.$root.getNodes();
+    this.$root.getProfiles();
   },
 };
 </script>
