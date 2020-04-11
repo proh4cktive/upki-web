@@ -185,7 +185,7 @@ export default {
         { key: 'CN', label: 'Name', sortable: true, sortDirection: 'desc' },
         { key: 'Created_human', label: 'Created', sortable: true, sortDirection: 'desc' },
         { key: 'Duration', label: 'Duration', sortable: false },
-        { key: 'Expire', label: 'Expire', sortable: true, sortDirection: 'desc' },
+        { key: 'Expire_human', label: 'Expire', sortable: true, sortDirection: 'desc' },
         { key: 'actions', label: 'Actions', class: 'actions' },
       ]
     };
