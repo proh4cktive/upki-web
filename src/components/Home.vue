@@ -1,8 +1,8 @@
 <template>
   <b-container class="text-center d-flex flex-column align-items-center justify-content-center" style="height: 100%">
     <div>
-      <h1 class="title text-center">Welcome on μPKI administration!</h1>
       <div class="logo mt-5 mb-5"></div>
+      <h1 class="title text-center">Welcome on μPKI administration!</h1>
       <div>
         <b-button type="button" variant="success" size="lg" @click="downloadCA()">
           <i class="fa fa-download"></i>
@@ -33,15 +33,11 @@ export default {
       request
         .get(`${this.api_host}/certs/ca.crt`)
         .then(res => {
-          const variant = res.data.status === "success" ? "success" : "danger";
-          if (variant === "success") {
-            this.$root.forceFileDownload({
-              name: "ca.crt",
-              data: res.data.certificate
-            });
-          } else {
-            this.$root.showAlert(res.data.message, "danger");
-          }
+          this.$root.forceFileDownload({
+            type: 'application/x-x509-ca-cert',
+            name: "ca.crt",
+            data: res.data
+          });
         })
         .catch(error => {
           // eslint-disable-next-line
@@ -53,15 +49,11 @@ export default {
       request
         .get(`${this.api_host}/certs/crl.pem`)
         .then(res => {
-          const variant = res.data.status === "success" ? "success" : "danger";
-          if (variant === "success") {
-            this.$root.forceFileDownload({
-              name: "crl.pem",
-              data: res.data.certificate
-            });
-          } else {
-            this.$root.showAlert(res.data.message, "danger");
-          }
+          this.$root.forceFileDownload({
+            type: 'application/pkcs-crl',
+            name: "crl.pem",
+            data: res.data
+          });
         })
         .catch(error => {
           // eslint-disable-next-line
@@ -78,10 +70,10 @@ h1.title
   color: #3d4c5a
 
 .logo
-  background: url('~@/assets/logo.png') no-repeat center center
+  background: url('~@/assets/logo.svg') no-repeat center center
   background-size: contain
   margin: 0 auto
-  width: 200px
-  height: 200px
+  width: 400px
+  height: 400px
 
 </style>

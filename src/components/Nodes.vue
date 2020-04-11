@@ -1,103 +1,147 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-10">
+  <b-container>
+    <b-row>
+      <b-col sm="10">
         <h1><i class="fa fa-medal"></i> Certificates</h1>
-      </div>
-      <div class="col-sm-2">
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col lg="6" class="my-1">
+        <b-form-group
+          label="Filter"
+          label-cols-sm="1"
+          label-align-sm="right"
+          label-size="sm"
+          label-for="filterInput"
+          class="mb-0"
+        >
+          <b-input-group size="sm">
+            <b-form-input
+              v-model="filter"
+              type="search"
+              id="filterInput"
+              placeholder="Filter nodes"
+            ></b-form-input>
+            <b-input-group-append>
+              <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+      <b-col sm="2">
         <button type="button"
                 class="btn btn-success btn-sm"
                 @click="showNodeModal(null, 'Create')">
               <i class="fa fa-plus-circle"></i>
               Add Certificate
         </button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Type</th>
-              <th scope="col">Profile</th>
-              <th scope="col">Name (CN)</th>
-              <th scope="col">Creation</th>
-              <th scope="col">Duration</th>
-              <th scope="col" class="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(node, index) in this.$root.nodes"
-              :key=index
-              :class="node.State.toLowerCase()"
-              @click="displayNode(node.DN)">
-              <td>
-                <i class="fa fa-star"
-                    title="CA"
-                    v-b-tooltip.hover
-                    v-if="hasFeature(node.Profile, 'sslCA')"></i>
-                <i class="fa fa-user"
-                    title="User"
-                    v-b-tooltip.hover
-                    v-if="hasFeature(node.Profile, 'clientAuth')"></i>
-                <i class="fa fa-server"
-                    title="Server"
-                    v-b-tooltip.hover
-                    v-if="hasFeature(node.Profile, 'serverAuth')"></i>
-                <i class="fa fa-envelope"
-                    title="Email"
-                    v-b-tooltip.hover
-                    v-if="hasFeature(node.Profile, 'emailProtection')"></i>
-              </td>
-              <td>{{ node.Profile | capitalize }}</td>
-              <td>{{ node.CN }}</td>
-              <td>{{ node.Created_human }}</td>
-              <td>{{ node.Duration }} days</td>
-              <td class="text-right">
-                <i v-if="node.State === 'Init'"
-                    class="fa fa-edit text-primary pointer"
-                    v-b-tooltip.hover
-                    title="Edit node"
-                    @click.stop="editNode(node.DN)"></i>
-                <i v-if="node.State === 'Init'"
-                    class="fa fa-file-signature pointer"
-                    v-b-tooltip.hover
-                    title="Sign node"
-                    @click.stop="showNodeSign(node)"></i>
-                <i v-if="node.State === 'Init'"
-                    class="fa fa-magic text-warning pointer"
-                    v-b-tooltip.hover
-                    title="Get generation command"
-                    @click.stop="getCommand(node)"></i>
-                <i v-if="node.State === 'Valid'"
-                    class="fa fa-download pointer"
-                    v-b-tooltip.hover
-                    title="Download certificate"
-                    @click.stop="downloadCert(node.DN, node.CN, node.Profile)"></i>
-                <i v-if="node.State === 'Valid'"
-                    class="fa fa-ban text-danger pointer"
-                    v-b-tooltip.hover
-                    title="Revoke node"
-                    @click.stop="revokeNode(node.DN)"></i>
-                <i v-if="node.State === 'Revoked'"
-                    class="fa fa-check text-success pointer"
-                    v-b-tooltip.hover
-                    title="Restore node"
-                    @click.stop="restoreNode(node.DN)"></i>
-                <i v-if="['Revoked','Expired','Init'].includes(node.State)"
-                    class="fa fa-trash text-danger pointer"
-                    v-b-tooltip.hover
-                    title="Delete node"
-                    @click.stop="deleteNode(node.DN)"></i>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col sm="12">
+        <b-table
+          small
+          striped
+          hover
+          head-variant="dark"
+          show-empty
+          :per-page="15"
+          :filter="filter"
+          :items="this.$root.nodes"
+          :fields="fields"
+          :filterIncludedFields="filterOn"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          :tbody-tr-class="rowClass"
+          @filtered="onFiltered" class="nodes">
+          <template v-slot:cell(usages)="row">
+            <i class="fa fa-star"
+                title="CA"
+                v-b-tooltip.hover
+                v-if="hasFeature(row.item.Profile, 'sslCA')"></i>
+            <i class="fa fa-user"
+                title="User"
+                v-b-tooltip.hover
+                v-if="hasFeature(row.item.Profile, 'clientAuth')"></i>
+            <i class="fa fa-server"
+                title="Server"
+                v-b-tooltip.hover
+                v-if="hasFeature(row.item.Profile, 'serverAuth')"></i>
+            <i class="fa fa-envelope"
+                title="Email"
+                v-b-tooltip.hover
+                v-if="hasFeature(row.item.Profile, 'emailProtection')"></i>
+          </template>
+          <template v-slot:cell(actions)="row">
+            <b-button v-if="row.item.State === 'Init'"
+                v-b-tooltip.hover
+                title="Edit node"
+                variant="primary"
+                @click.stop="editNode(row.item.DN)">
+              <i class="fa fa-edit"></i>
+            </b-button>
+            <b-button v-if="row.item.State === 'Init'"
+                v-b-tooltip.hover
+                title="Sign node"
+                variant="success"
+                @click.stop="showNodeSign(row.item)">
+              <i class="fa fa-file-signature"></i>      
+            </b-button>
+            <b-button v-if="row.item.State === 'Init'"
+                v-b-tooltip.hover
+                title="Get generation command"
+                variant="warning"
+                @click.stop="getCommand(row.item)">
+              <i class="fa fa-magic"></i>      
+            </b-button>
+            <b-button v-if="row.item.State === 'Valid'"
+                v-b-tooltip.hover
+                title="Download certificate"
+                variant="primary"
+                @click.stop="downloadCert(row.item.DN, row.item.CN, row.item.Profile)">
+              <i class="fa fa-download pointer"></i>
+            </b-button>
+            <b-button v-if="row.item.State === 'Valid'"
+                v-b-tooltip.hover
+                title="Revoke node"
+                variant="danger"
+                @click.stop="revokeNode(row.item.DN)">
+              <i class="fa fa-ban"></i>
+            </b-button>
+            <b-button v-if="row.item.State === 'Revoked'"
+                v-b-tooltip.hover
+                title="Restore node"
+                variant="success"
+                @click.stop="restoreNode(row.item.DN)">
+              <i class="fa fa-check"></i>
+            </b-button>
+            <b-button v-if="['Revoked','Expired','Init'].includes(row.item.State)"
+                v-b-tooltip.hover
+                title="Delete node"
+                variant="danger"
+                @click.stop="deleteNode(row.item.DN)">
+              <i class="fa fa-trash"></i>
+            </b-button>
+          </template>
+          <template v-slot:empty="scope">
+            <div class="alert alert-warning">
+              <i class="fa fa-exclamation-triangle"></i>
+              {{ scope.emptyText }}
+            </div>
+          </template>
+          <template v-slot:emptyfiltered="scope">
+            <div class="alert alert-warning">
+              <i class="fa fa-exclamation-triangle"></i>
+              {{ scope.emptyFilteredText }}
+            </div>
+          </template>
+        </b-table>
+      </b-col>
+    </b-row>
     <modal-node  ref="modalNode"/>
     <modal-sign  ref="modalSign"/>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -117,13 +161,39 @@ export default {
     return {
       api_host: this.$root.privateAPI,
       node_host: this.$root.publicAPI,
+      sortBy: 'Created',
+      sortDesc: false,
+      sortDirection: 'desc',
+      filter: null,
+      filterOn: [],
+      fields: [
+        { key: 'usages', class: 'usages', tdClass: this.getUsage },
+        { key: 'Profile', label: 'Profile', sortable: true, sortDirection: 'desc' },
+        { key: 'CN', label: 'Name', sortable: true, sortDirection: 'desc' },
+        { key: 'Created_human', label: 'Created', sortable: true, sortDirection: 'desc' },
+        { key: 'Duration', label: 'Duration', sortable: false },
+        { key: 'Expire', label: 'Expire', sortable: true, sortDirection: 'desc' },
+        { key: 'actions', label: 'Actions', class: 'actions' },
+      ]
     };
   },
   components: {
     modalNode: ModalNode,
     modalSign: ModalSign,
   },
+  mounted() {
+    this.$root.getProfiles();
+    // Set the initial number of items
+    this.totalRows = this.$root.nodes.length
+  },
   methods: {
+    getUsage(value, key, item) {
+      return item.State.toLowerCase();
+    },
+    rowClass(item, type) {
+      if (!item || type !== 'row') return;
+      if (item.Admin) return 'table-danger';
+    },
     showNodeModal(node, action) {
       this.$refs.modalNode.showModal(node, action);
     },
@@ -216,6 +286,11 @@ export default {
           this.$root.showAlert(error, 'danger');
         });
     },
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    },
   },
   created() {
     this.$root.getNodes();
@@ -230,14 +305,25 @@ $size: 10px
 .pointer
   cursor: pointer
 
-tr
-  &.init
-    border-left: $size solid #0053b3
-  &.valid
-    border-left: $size solid #32b802
-  &.expired
-    border-left: $size solid #d4bf04
-  &.revoked
-    border-left: $size solid #b80600
+.nodes
+  margin-top: 1em
+
+  thead
+    border-left: $size solid #343a40
+
+  td
+    &.init
+      border-left: $size solid #0053b3
+    &.valid
+      border-left: $size solid #32b802
+    &.expired
+      border-left: $size solid #d4bf04
+    &.revoked
+      border-left: $size solid #b80600
+
+  th, td
+    &.actions,
+    &.usages
+      text-align: center
 
 </style>

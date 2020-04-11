@@ -77,6 +77,6 @@ export default {
   position: fixed
   bottom: 20px
   right: 20px
-  max-width: 350px
+  max-width: 800px
 
 </style>
