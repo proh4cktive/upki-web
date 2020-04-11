@@ -1,45 +1,83 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-10">
+  <b-container>
+    <b-row>
+      <b-col sm="10">
         <h1><i class="fa fa-user-shield"></i> Admins</h1>
-      </div>
-      <div class="col-sm-2">
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col lg="6" class="my-1">
+        <b-form-group
+          label="Filter"
+          label-cols-sm="1"
+          label-align-sm="right"
+          label-size="sm"
+          label-for="filterInput"
+          class="mb-0"
+        >
+          <b-input-group size="sm">
+            <b-form-input
+              v-model="filter"
+              type="search"
+              id="filterInput"
+              placeholder="Filter admins"
+            ></b-form-input>
+            <b-input-group-append>
+              <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+      <b-col sm="2">
         <button type="button"
                 class="btn btn-success btn-sm"
                 @click="showAdminModal(null)">
               <i class="fa fa-plus-circle"></i>
               Add Admin
         </button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">DN</th>
-              <th scope="col" class="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(admin, index) in this.$root.admins" :key=index>
-              <td>{{ admin.name }}</td>
-              <td>{{ admin.DN }}</td>
-              <td class="text-right">
-                <i class="fa fa-times text-danger pointer"
-                    v-b-tooltip.hover
-                    title="Delete admin"
-                    @click="deleteAdmin(admin.DN)"></i>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col sm="12">
+        <b-table
+          small
+          striped
+          hover
+          head-variant="dark"
+          show-empty
+          :per-page="15"
+          :items="this.$root.admins"
+          :fields="fields"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          @filtered="onFiltered" class="admins">
+          <template v-slot:cell(actions)="row">
+            <b-button
+                v-b-tooltip.hover
+                title="Delete admin"
+                variant="danger"
+                @click.stop="deleteAdmin(row.item.dn)">
+              <i class="fa fa-times"></i>
+            </b-button>
+          </template>
+          <template v-slot:empty="scope">
+            <div class="alert alert-warning">
+              <i class="fa fa-exclamation-triangle"></i>
+              {{ scope.emptyText }}
+            </div>
+          </template>
+          <template v-slot:emptyfiltered="scope">
+            <div class="alert alert-warning">
+              <i class="fa fa-exclamation-triangle"></i>
+              {{ scope.emptyFilteredText }}
+            </div>
+          </template>
+        </b-table>
+      </b-col>
+    </b-row>
     <modal-admin ref="modalAdmin"/>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -50,25 +88,39 @@ export default {
   data() {
     return {
       api_host: this.$root.privateAPI,
+      sortBy: 'Name',
+      sortDesc: false,
+      sortDirection: 'desc',
+      filter: null,
+      filterOn: [],
+      fields: [
+        { key: 'name', label: 'Name', sortable: true, sortDirection: 'desc', class: 'name' },
+        { key: 'dn', label: 'Domain Name', sortable: true, sortDirection: 'desc' },
+        { key: 'actions', label: 'Actions', class: 'actions'},
+      ]
     };
   },
   components: {
     modalAdmin: ModalAdmin,
   },
   mounted() {
-    this.$root.getAdmins()
+    // Set the initial number of items
+    this.totalRows = this.$root.admins.length;
   },
   methods: {
-    showAdminModal(admin, action = 'Create') {
-      this.$refs.modalAdmin.showModal(admin, action);
+    showAdminModal() {
+      this.$refs.modalAdmin.showModal();
     },
-    deleteProfile(admin) {
-      const path = `${this.api_host}/admins/${admin.name}`;
+    deleteAdmin(dn) {
+      const dest = btoa(dn);
+      const path = `${this.api_host}/admins/${dest}`;
       request.delete(path)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
+            // Update global lists
             this.$root.getAdmins();
+            this.$root.getNodes();
           } else {
             this.$root.showAlert(res.data.message, variant);
           }
@@ -78,6 +130,11 @@ export default {
           console.error(error);
           this.$root.showAlert(error, 'danger');
         });
+    },
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
     },
   },
 };
@@ -89,14 +146,11 @@ $size: 10px
 .pointer
   cursor: pointer
 
-tr
-  &.init
-    border-left: $size solid #0053b3
-  &.valid
-    border-left: $size solid #32b802
-  &.expired
-    border-left: $size solid #d4bf04
-  &.revoked
-    border-left: $size solid #b80600
+.admins
+  margin-top: 1em
+
+  th, td
+    &.name
+      text-align: center
 
 </style>

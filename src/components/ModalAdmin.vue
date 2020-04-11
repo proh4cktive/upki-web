@@ -1,43 +1,34 @@
 <template>
-    <b-modal ref="modalAdmin"
-            :title="title"
-            size="lg"
-            hide-footer>
-      <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-        <b-card bg-variant="light">
-          <b-form-group id="form-profile-group"
-              label="Admin"
-              label-for="form-profile-input"
-              label-cols-sm="3"
-              label-align-sm="right"
-              class="mb-0">
-            <b-form-text id="form-dn-input"
-                size="lg">{{nodeAdmins.Profile}}
-            </b-form-text>
-          </b-form-group>
-        </b-card>
-        <b-form-group class="controls">
-          <b-button type="submit"
-            variant="primary"
-            v-if="actionName !== 'Show'">
-            <i class="fa fa-plus-circle"></i>
-            <span>{{ actionName }} admin</span>
-          </b-button>
-          <b-button type="reset"
-            v-else
-            variant="danger">
-            <i class="fa fa-times"></i>
-            Close
-          </b-button>
-          <b-button type="reset"
-            v-if="actionName !== 'Show'"
-            variant="danger">
-            <i class="fa fa-ban"></i>
-            Cancel
-          </b-button>
-        </b-form-group>
-      </b-form>
-    </b-modal>
+  <b-modal ref="modalAdmin"
+      title="Promote Node to Admin role"
+      size="lg"
+      hide-footer>
+    <b-form @submit="onSubmit" @reset="onReset" class="w-100">
+      <b-card bg-variant="light">
+        <div class="list-group">
+          <a v-for="(entry,index) in currentNodes()"
+              href="#"
+              :key="index"
+              @click.stop="selectNode"
+              class="list-group-item list-group-item-action">
+            {{ entry.DN }}
+          </a>
+        </div>
+      </b-card>
+      <b-form-group class="controls">
+        <b-button type="submit"
+          variant="primary">
+          <i class="fa fa-plus-circle"></i>
+          <span> Promote Selected</span>
+        </b-button>
+        <b-button type="reset"
+          variant="danger">
+          <i class="fa fa-times"></i>
+          Close
+        </b-button>
+      </b-form-group>
+    </b-form>
+  </b-modal>
 </template>
 <script>
 import request from './../core/request';
@@ -48,32 +39,40 @@ export default {
       api_host: this.$root.privateAPI,
       adminForm: this.$root.adminForm,
       actionName: null,
-      title: null,
-      nodeAdmins: {}
+      isActive: false,
+      admins: [],
+      neoAdmins: []
     };
   },
   name: 'ModalAdmin',
   methods: {
-    showModal(node, action) {
-      this.editForm = Boolean(node);
-      // Adapt modal title
-      this.title = `${action} Admin`;
-      // Adapt button action
-      if (action === 'Duplicate') {
-        this.actionName = 'Create';
-      } else {
-        this.actionName = action;
-      }
+    showModal() {
       // Display modal
       this.$refs.modalAdmin.show();
     },
-    addAdmin(payload) {
+    currentNodes() {
+      var nodes = [];
+      // Parse each nodes
+      for (var i = 0; i < this.$root.nodes.length; i++) {
+        // Avoid nodes already admins
+        if (!this.$root.nodes[i].Admin) {
+          nodes.push(this.$root.nodes[i]);
+        }
+      }
+      return nodes;
+    },
+    selectNode(event) {
+      this.neoAdmins.push(event.target.innerText);
+      event.target.classList.toggle('active');
+    },
+    addAdmins() {
       const path = `${this.api_host}/admins`;
-      request.post(path, payload)
+      request.post(path, this.neoAdmins)
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
-            // Update global list
+            // Update global lists
+            this.$root.getAdmins();
             this.$root.getNodes();
           }
           this.$root.showAlert(res.data.message, variant);
@@ -87,20 +86,22 @@ export default {
     onSubmit(evt) {
       evt.preventDefault();
       this.$refs.modalAdmin.hide();
-      const payload = {
-        DN: this.adminForm.DN,
-      };
-      this.addAdmin(payload);
+      this.addAdmins();
       this.$refs.modalAdmin.hide();
       // Reset data
       this.adminForm = this.$root.adminForm;
+      this.neoAdmins = [];
     },
     onReset(evt) {
       evt.preventDefault();
       this.$refs.modalAdmin.hide();
       // Reset data
       this.adminForm = this.$root.adminForm;
+      this.neoAdmins = [];
     },
+  },
+  created() {
+    this.$root.getNodes();
   },
 };
 </script>
