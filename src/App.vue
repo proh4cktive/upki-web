@@ -37,7 +37,7 @@ export default {
     alert: Alert
   },
   data() {
-    const defaultCollapsedBehavior = false;
+    const defaultCollapsedBehavior = true;
     return {
       hasSideMenuCollapsed: defaultCollapsedBehavior,
 
@@ -47,7 +47,8 @@ export default {
       menu: [
         {
           header: true,
-          title: "menu"
+          title: "Navigation",
+          hiddenOnCollapse: true
         },
         {
           href: "/",

@@ -90,10 +90,11 @@ new Vue({
   },
   methods: {
     forceFileDownload(response) {
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(new Blob([response.data],{ type: (response.type || 'text/plain') }));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', response.name);
+      link.setAttribute('target', '_self');
       document.body.appendChild(link);
       link.click();
     },
@@ -103,7 +104,11 @@ new Vue({
         .then((res) => {
           const variant = (res.data.status === 'success') ? 'success' : 'danger';
           if (variant === 'success') {
-            this.forceFileDownload({ name: `${profile}.${cn}.crt`, data: res.data.certificate });
+            this.forceFileDownload({
+              type: 'application/x-x509-user-cert',
+              name: `${profile}.${cn}.crt`,
+              data: res.data.certificate
+            });
           } else {
             // eslint-disable-next-line
             console.error(res.data.message);
@@ -214,6 +219,7 @@ new Vue({
     initNode(data) {
       let nodeData = {};
       if (data) {
+        nodeData.Admin = data.Admin;
         nodeData.State = data.State;
         nodeData.Profile = data.Profile;
         nodeData.CN = data.CN;
@@ -267,7 +273,7 @@ new Vue({
     },
     profileSupport(profileName, feature) {
       const profile = this.getProfile(profileName);
-      if (profile.certType.includes(feature) || profile.extendedKeyUsage.includes(feature)) {
+      if (profile.certType && (profile.certType.includes(feature) || profile.extendedKeyUsage.includes(feature))) {
         return true;
       }
       return false;

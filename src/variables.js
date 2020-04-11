@@ -8,5 +8,6 @@ if (!('port' in params)) {
 if (!('protocol' in params)) {
     params.protocol = (params.protocol == 'https' || params.protocol == 'http') ? params.protocol : 'https';
 }
-export const publicHost = `${params.protocol}://${params.host ? ':' + params.host : ''}:${params.port ? params.port : ''}`;
+// export const publicHost = `${params.protocol}://${params.host ? ':' + params.host : ''}:${params.port ? params.port : ''}`;
+export const publicHost = `${params.protocol}://${params.host}:${params.port}`;
 export const privateHost = `${params.protocol}://${params.host}:${params.port}/private`;
